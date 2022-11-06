@@ -1,90 +1,56 @@
-import { login, logout, getInfo } from '@/api/user'
+import { userLogin, getUserProfile, getUserAvatar } from '@/api'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
+    userInfo: {}
   }
 }
 
 const state = getDefaultState()
 
 const mutations = {
-  RESET_STATE: (state) => {
+  RESET_STATE(state) {
     Object.assign(state, getDefaultState())
   },
-  SET_TOKEN: (state, token) => {
+  SET_TOKEN(state, token) {
     state.token = token
+    setToken(token)
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  REMOVE_TOKEN(state) {
+    state.token = ''
+    removeToken()
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_USER(state, value) {
+    state.userInfo = value
+  },
+  REMOVE_USER(state) {
+    state.userInfo = {}
   }
 }
 
 const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  // 用户登录
+  async loginActions({ commit }, data) {
+    try {
+      const res = await userLogin(data)
+      commit('SET_TOKEN', res.data)
+      return res
+    } catch (error) {
+      return Promise.reject(error)
+    }
   },
-
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          return reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    })
+  // 获取用户信息
+  async getUserInfoActions({ commit }) {
+    try {
+      const res = await getUserProfile()
+      const res2 = await getUserAvatar(res.data.userId)
+      commit('SET_USER', { ...res.data, ...res2.data })
+      // console.log(res)
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 
