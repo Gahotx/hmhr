@@ -1,9 +1,10 @@
 import router from './router'
+import store from '@/store'
+import getPageTitle from '@/utils/get-page-title'
 // 导入进度条插件
 import NProgress from 'nprogress'
 // 导入进度条样式
 import 'nprogress/nprogress.css'
-import store from '@/store'
 
 const whiteList = ['/login'] // no redirect whitelist
 
@@ -19,10 +20,10 @@ router.beforeEach(async(to, from, next) => {
       next('/')
       NProgress.done()
     } else {
+      next()
       if (!store.getters.name) {
         store.dispatch('user/getUserInfoActions')
       }
-      next()
     }
   } else {
     // 未登录
@@ -36,7 +37,8 @@ router.beforeEach(async(to, from, next) => {
 })
 
 // 后置守卫
-router.afterEach(() => {
+router.afterEach((to, from) => {
   // 正常 next() 跳转才走后置守卫
+  document.title = getPageTitle(to.meta.title)
   NProgress.done()
 })

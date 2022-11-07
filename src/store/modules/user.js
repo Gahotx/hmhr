@@ -51,6 +51,12 @@ const actions = {
     } catch (error) {
       return Promise.reject(error)
     }
+  },
+  // 退出登录
+  logoutActions({ commit }) {
+    commit('REMOVE_TOKEN')
+    commit('REMOVE_USER')
+    // console.log('已退出')
   }
 }
 

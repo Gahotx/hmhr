@@ -123,8 +123,8 @@ export default {
           this.loading = true
           try {
             const res = await this.$store.dispatch('user/loginActions', this.loginForm)
-            this.$message.success(res.message)
-            this.$router.replace('/')
+            this.$message.success(res.message + '!')
+            this.$router.replace(this.redirect || '/')
           } catch (err) {
             console.error(err)
           }

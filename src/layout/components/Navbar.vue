@@ -7,14 +7,16 @@
     />
 
     <div class="app-breadcrumb">
-      江苏传智播客教育科技股份有限公司
+      未来科技股份有限公司
       <span class="breadBtn">体验版</span>
     </div>
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="@/assets/common/bigUserHeader.png" class="user-avatar">
+          <el-avatar :src="avatar" class="user-avatar">
+            <img src="@/assets/common/bigUserHeader.png" class="user-avatar">
+          </el-avatar>
           <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
@@ -22,7 +24,7 @@
           <router-link to="/">
             <el-dropdown-item> 首页 </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://gitee.com/shuiruohanyu/hrsaas53">
+          <a target="_blank" href="https://shuiruohanyu.gitee.io/yyds/api.html">
             <el-dropdown-item> 项目地址 </el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
@@ -43,15 +45,30 @@ export default {
     Hamburger
   },
   computed: {
-    ...mapGetters(['sidebar', 'name'])
+    ...mapGetters(['sidebar', 'name', 'avatar'])
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$confirm('你确定要退出吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await this.$store.dispatch('user/logoutActions')
+        this.$router.replace(`/login?redirect=${encodeURIComponent(this.$route.fullPath)}`)
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
+        })
+      })
     }
   }
 }

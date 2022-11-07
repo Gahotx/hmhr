@@ -29,17 +29,17 @@ service.interceptors.response.use(
     if (success) {
       return response.data
     } else {
+      // 如：用户名或密码错误
       Message.error(message)
       return Promise.reject(message)
     }
   },
   error => {
-    Message.error(error?.response?.data?.message)
-    // 处理token超时
+    // 如：token超时
+    Message.error(error?.response?.data?.message + '，请重新登录！')
     if (error?.response?.data?.code === 10002) {
-      store.commit('user/REMOVE_TOKEN')
-      store.commit('user/REMOVE_USER')
-      router.replace('/login')
+      store.dispatch('user/logoutActions')
+      router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)
     }
     return Promise.reject(error)
   }

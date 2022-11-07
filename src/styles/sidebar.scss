@@ -5,6 +5,7 @@
     transition: margin-left .28s;
     margin-left: $sideBarWidth;
     position: relative;
+    background-color: #f0f2f5;
   }
 
   .sidebar-container {
@@ -68,6 +69,18 @@
       border: none;
       height: 100%;
       width: 100% !important;
+
+      .is-active {
+        background-color: $menuText !important;
+          
+        span{
+          color: $menuActiveText !important;
+        }
+          
+        .svg-icon{
+          color: $menuActiveText !important;
+        }
+      }
 
       a {
         li {
