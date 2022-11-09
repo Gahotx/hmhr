@@ -36,7 +36,7 @@ service.interceptors.response.use(
   },
   error => {
     // 如：token超时
-    Message.error(error?.response?.data?.message + '，请重新登录！')
+    Message.error(error?.response?.data?.message || '请求超时，请稍后重试！')
     if (error?.response?.data?.code === 10002) {
       store.dispatch('user/logoutActions')
       router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)

@@ -93,7 +93,7 @@ export default {
     // 编号重复
     const validCode = (rule, value, callback) => {
       if (this.editTpye) {
-        const fliterCodeList = this.validList.filter(item => item.id !== this.clickId).map(item => item.code) // 排除了本身的部门列表
+        const fliterCodeList = this.validList.filter(item => item.id !== this.clickId).map(item => item.code) // 排除本身的部门编号
         fliterCodeList.includes(value) ? callback(new Error(`编码 ${value} 已存在`)) : callback()
       } else {
         const codeList = this.validList.map(item => item.code) // 所有部门的编号
@@ -103,12 +103,12 @@ export default {
     // 名称重复
     const validName = (rule, value, callback) => {
       if (this.editTpye) {
-        const listSelf = this.validList.find(item => item.id === this.clickId) // 寻找本身
+        const listSelf = this.validList.find(item => item.id === this.clickId) // 寻找当前编辑的部门
         const pId = listSelf.pid // 当前部门的pid
         const fliterNameList = this.validList.filter(item => item.pid === pId && item.id !== this.clickId).map(item => item.name) // 通过pid获得其他同级部门
         fliterNameList.includes(value) ? callback(new Error(`${value} 已存在`)) : callback()
       } else {
-        const codeList = this.validList.filter(item => item.pid === this.clickId).map(item => item.name) // 所有部门的编号
+        const codeList = this.validList.filter(item => item.pid === this.clickId).map(item => item.name) // 所有子级部门的名称
         codeList.includes(value) ? callback(new Error(`${value} 已存在`)) : callback()
       }
     }
@@ -147,8 +147,8 @@ export default {
     confirmFn(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$emit('update:dialogVisible', false)
           this.$emit('editDepartEV', this.form)
+          this.$emit('update:dialogVisible', false)
         } else {
           console.log('error submit!!')
           return false
@@ -157,12 +157,6 @@ export default {
     },
     // 弹窗消失后重置表单数据
     handleClose() {
-      this.form = {
-        name: '', // 部门名称
-        code: '', // 部门编码
-        manager: '', // 部门管理者
-        introduce: '' // 部门介绍
-      }
       this.$refs.deptForm.resetFields() // 移除校验结果
     }
   }

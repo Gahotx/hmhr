@@ -8,13 +8,6 @@
           <!-- tab导航 -->
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="组织导航" name="first" class="tab-pane">
-              <!-- class="tab-pane"设置左右padding, 把内容往中间挤压 -->
-              <!-- 使用 Layout 布局绘制头部区域
-                最外层一行, 2列
-                  el-row: type布局模式
-                          justify两端对齐
-                          align交叉轴排列方式(垂直方向居中)
-               -->
               <el-row
                 type="flex"
                 justify="space-between"
@@ -202,8 +195,7 @@ export default {
       this.$confirm('您确定要删除该部门吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
-        lockScroll: false
+        type: 'warning'
       })
         .then(async() => {
           await delDepartment(data.id)

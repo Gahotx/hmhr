@@ -20,9 +20,12 @@ router.beforeEach(async(to, from, next) => {
       next('/')
       NProgress.done()
     } else {
-      next()
-      if (!store.getters.name) {
-        store.dispatch('user/getUserInfoActions')
+      // 防止刷新页面时获取不到vuex中用户信息
+      if (store.getters.name) {
+        next()
+      } else {
+        await store.dispatch('user/getUserInfoActions')
+        next()
       }
     }
   } else {

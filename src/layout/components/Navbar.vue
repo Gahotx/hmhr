@@ -55,8 +55,7 @@ export default {
       this.$confirm('你确定要退出吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
-        lockScroll: false
+        type: 'warning'
       }).then(async() => {
         await this.$store.dispatch('user/logoutActions')
         this.$router.replace(`/login?redirect=${encodeURIComponent(this.$route.fullPath)}`)
