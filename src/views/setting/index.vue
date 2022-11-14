@@ -136,6 +136,7 @@
 
 <script>
 import { getAllroles, getCompany, addRole, getRoleDetail, updateRoleDetail, delRole } from '@/api'
+import { reslog } from '@/utils'
 
 export default {
   data() {
@@ -190,20 +191,14 @@ export default {
         if (valid) {
           if (this.isEdit) {
             // 编辑
-            await updateRoleDetail(this.roleForm)
+            const res = await updateRoleDetail(this.roleForm)
             await this.getAllrolesArr()
-            this.$message({
-              type: 'success',
-              message: '修改成功!'
-            })
+            reslog(res)
           } else {
             // 添加
-            await addRole(this.roleForm)
+            const res = await addRole(this.roleForm)
             await this.getAllrolesArr()
-            this.$message({
-              type: 'success',
-              message: '添加成功!'
-            })
+            reslog(res)
           }
           this.showDialog = false
         } else {
@@ -248,15 +243,12 @@ export default {
     },
     // 删除角色
     async delRole(data) {
-      await delRole(data.id)
+      const res = await delRole(data.id)
       if (this.rolesList.length === 1 && this.query.page > 1) {
         this.query.page--
       }
       await this.getAllrolesArr()
-      this.$message({
-        type: 'success',
-        message: '删除成功!'
-      })
+      reslog(res)
     }
   }
 }

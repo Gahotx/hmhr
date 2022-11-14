@@ -1,6 +1,4 @@
-/**
- * Created by PanJiaChen on 16/11/18.
- */
+import { Message } from 'element-ui'
 
 /**
  * Parse the time to string
@@ -126,12 +124,37 @@ export function transTree(list, rootValue) { // list: 整个数组, rootValue本
   const treeData = [] // 装下属对象的
   list.forEach(item => {
     if (item.pid === rootValue) { // 当前对象pid符合, 继续递归调用查找它的下属
-      const children = transTree(list, item.id) // 返回item对象下属数组
-      if (children.length) {
-        item.children = children // 为item添加children属性保存下属数组
+      const options = transTree(list, item.id) // 返回item对象下属数组
+      if (options.length) {
+        item.options = options // 为item添加options属性保存下属数组
       }
       treeData.push(item) // 把当前对象保存到数组里, 继续遍历
     }
   })
-  return treeData // 遍历结束, rootValue的id对应下属们收集成功, 返回给上一次递归调用children, 加到父级对象的children属性下
+  return treeData // 遍历结束, rootValue的id对应下属们收集成功, 返回给上一次递归调用options, 加到父级对象的options属性下
+}
+
+/**
+ * 添加或删除后弹窗反馈结果
+ * @param {*} res 调用结果返回的结果
+ */
+export function reslog(res) {
+  if (res.success) {
+    Message.success(res.message)
+  } else {
+    Message.error(res.message)
+  }
+}
+
+// 把excel文件中的日期格式的内容转回成标准时间
+export function formatExcelDate(numb, format = '/') {
+  const time = new Date((numb - 25567) * 24 * 3600000 - 5 * 60 * 1000 - 43 * 1000 - 24 * 3600000)
+  time.setYear(time.getFullYear())
+  const year = time.getFullYear() + ''
+  const month = time.getMonth() + 1 + ''
+  const date = time.getDate() + ''
+  if (format && format.length === 1) {
+    return year + format + month + format + date
+  }
+  return year + (month < 10 ? '0' + month : month) + (date < 10 ? '0' + date : date)
 }

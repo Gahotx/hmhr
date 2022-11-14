@@ -35,6 +35,12 @@ Vue.use(GlobalComponent) // 自定义全局组件
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI)
+ElementUI.Dialog.props.lockScroll.default = false
+ElementUI.MessageBox.setDefaults({
+  lockScroll: false
+})
+ElementUI.TableColumn.props.align.default = 'center'
+// console.log(ElementUI.TableColumn)
 
 Vue.config.productionTip = false
 

@@ -99,7 +99,7 @@
 
       <!-- 添加子部门弹窗Dialog -->
       <depart-dialog
-        ref="departDialog"
+        ref="DepartDialog"
         :dialog-visible.sync="showDialog"
         :employees="userList"
         :valid-list="originList"
@@ -120,20 +120,20 @@ import {
   updateDepartDetail,
   delDepartment
 } from '@/api'
-import { transTree } from '@/utils'
-import departDialog from './components/departDialog.vue'
+import { transTree, reslog } from '@/utils'
+import DepartDialog from './components/DepartDialog'
 
 export default {
   name: 'Departments',
   components: {
-    departDialog
+    DepartDialog
   },
   data() {
     return {
       activeName: 'first', // 被激活的 Tab 标签页
       treeData: [], // 层级部门列表，树形控件数据
       defaultProps: {
-        children: 'children',
+        children: 'options',
         label: 'name'
       },
       showDialog: false, // 添加部门弹窗显隐
@@ -186,7 +186,7 @@ export default {
       this.showDialog = true
       this.isEdit = true
       const res = await getDepartDetail(data.id)
-      this.$refs.departDialog.form = res.data
+      this.$refs.DepartDialog.form = res.data
       this.clickDepartId = data.id
       // console.log(res)
     },
@@ -198,12 +198,9 @@ export default {
         type: 'warning'
       })
         .then(async() => {
-          await delDepartment(data.id)
+          const res = await delDepartment(data.id)
           await this.getDepartmentArr()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
+          reslog(res)
         })
         .catch(() => {
           this.$message({
@@ -217,21 +214,15 @@ export default {
       if (this.isEdit) {
         // 编辑部门详情
         form.id = this.clickDepartId
-        await updateDepartDetail(form)
+        const res = await updateDepartDetail(form)
         await this.getDepartmentArr()
-        this.$message({
-          type: 'success',
-          message: '修改成功!'
-        })
+        reslog(res)
       } else {
         // 添加子部门
         form.pid = this.clickDepartId
-        await addDepartment(form)
+        const res = await addDepartment(form)
         await this.getDepartmentArr()
-        this.$message({
-          type: 'success',
-          message: '添加成功!'
-        })
+        reslog(res)
       }
     }
   }
