@@ -1,4 +1,4 @@
-import { userLogin, getUserProfile, getUserAvatar } from '@/api'
+import { userLogin, getUserProfile, getUserDetail } from '@/api'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const getDefaultState = () => {
@@ -45,7 +45,7 @@ const actions = {
   async getUserInfoActions({ commit }) {
     try {
       const res = await getUserProfile()
-      const res2 = await getUserAvatar(res.data.userId)
+      const res2 = await getUserDetail(res.data.userId)
       commit('SET_USER', { ...res.data, ...res2.data })
       // console.log(res)
     } catch (error) {

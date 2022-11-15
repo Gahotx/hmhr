@@ -50,3 +50,16 @@ export function batchUser(data) {
     data
   })
 }
+
+/**
+ * 修改（保存）员工基本信息
+ * @param {*} data 员工基本信息
+ * @returns
+ */
+export function updateUserDetail(data) {
+  return requset({
+    url: `/sys/user/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}

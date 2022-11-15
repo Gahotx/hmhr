@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
+    <upload-excel :on-success="handleSuccess" :before-upload="beforeUpload" />
     <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
       <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
     </el-table>
@@ -8,13 +8,11 @@
 </template>
 
 <script>
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import { formatExcelDate, reslog } from '@/utils'
 import { batchUser } from '@/api'
 
 export default {
   name: 'Excel',
-  components: { UploadExcelComponent },
   data() {
     return {
       tableData: [],

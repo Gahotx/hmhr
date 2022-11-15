@@ -25,11 +25,11 @@ export function getUserProfile() {
 }
 
 /**
- * 获取用户基本信息（头像）
+ * 获取员工基本信息（头像）
  * @param {*} id 用户id
  * @returns Promise
  */
-export function getUserAvatar(id) {
+export function getUserDetail(id) {
   return request({
     url: `/sys/user/${id}`,
     method: 'GET'
