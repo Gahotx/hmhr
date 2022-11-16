@@ -52,7 +52,7 @@
           <el-table-column label="操作" width="280">
             <template #default="{ row }">
               <el-button type="text" size="small" @click="$router.push(`/employees/detail?id=${row.id}&form=${row.formOfEmployment}`)">查看</el-button>
-              <el-button type="text" size="small">分配角色</el-button>
+              <el-button type="text" size="small" @click="setRole(row.id)">分配角色</el-button>
               <el-button type="text" size="small" @click="delEmpFn(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -91,20 +91,28 @@
           @addEmpEV="addEmpFn"
         />
       </el-dialog>
+
+      <!-- 员工-分配角色权限 - 弹窗 -->
+      <el-dialog title="分配角色" :visible.sync="showRoleDialog" @closed="roleClose">
+        <!-- 设置角色组件 -->
+        <assign-role ref="AssignRole" :roles-list="rolesList" @assignRolesEV="assignRolesFn" @close="showRoleDialog = false" />
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getUser, getDepartment, addUser, delUser } from '@/api'
+import { getUser, getDepartment, addUser, delUser, getAllroles, getUserDetail, assignRoles } from '@/api'
 import dayjs from 'dayjs'
 import EmpForm from './components/EmpForm'
 import { transTree, reslog } from '@/utils'
+import AssignRole from './components/AssignRole.vue'
 
 export default {
   name: 'Employees',
   components: {
-    EmpForm
+    EmpForm,
+    AssignRole
   },
   data() {
     return {
@@ -127,7 +135,10 @@ export default {
       ],
       showDialog: false, // 添加员工组件的展示
       departArr: [], // 部门列表
-      options: [] // 部门列表选项
+      options: [], // 部门列表选项
+      showRoleDialog: false, // 分配角色弹窗
+      rolesList: [], // 角色列表
+      userId: '' // 操作时的员工id
     }
   },
   created() {
@@ -152,7 +163,7 @@ export default {
         id: item.id,
         pid: item.pid
       }))
-      const opt1 = transTree(this.departArr, '')
+      const opt1 = transTree(this.departArr, '', 'options')
       const opt2 = opt1.map((item) => ({
         options: item.options || []
       }))
@@ -176,6 +187,23 @@ export default {
         }
       }
       this.options = opt2
+    },
+    // 获取角色列表
+    async getAllrolesFn() {
+      const res = await getAllroles({
+        page: 1,
+        pagesize: 10
+      })
+      if (res.data.total > 10) {
+        const res2 = await getAllroles({
+          page: 1,
+          pagesize: res.data.total
+        })
+        this.rolesList = res2.data.rows
+      } else {
+        this.rolesList = res.data.rows
+      }
+      // console.log(res)
     },
     formatter(row, column, cellValue, index) {
       return (
@@ -268,6 +296,29 @@ export default {
           bookType: 'xlsx' // 生成的文件类型
         })
       })
+    },
+    // 点击-分配角色
+    async setRole(id) {
+      this.userId = id
+      this.getAllrolesFn()
+      const res = await getUserDetail(id)
+      this.showRoleDialog = true
+      this.$nextTick(() => {
+        this.$refs.AssignRole.roleIdList = res.data.roleIds
+      })
+      // console.log(res)
+    },
+    // 分配角色弹窗关闭
+    roleClose() {
+      this.$refs.AssignRole.roleIdList = []
+    },
+    // 分配角色
+    async assignRolesFn(list) {
+      const res = await assignRoles({
+        id: this.userId,
+        roleIds: list
+      })
+      reslog(res)
     }
   }
 }

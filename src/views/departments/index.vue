@@ -133,7 +133,7 @@ export default {
       activeName: 'first', // 被激活的 Tab 标签页
       treeData: [], // 层级部门列表，树形控件数据
       defaultProps: {
-        children: 'options',
+        children: 'children',
         label: 'name'
       },
       showDialog: false, // 添加部门弹窗显隐

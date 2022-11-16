@@ -63,3 +63,16 @@ export function updateUserDetail(data) {
     data
   })
 }
+
+/**
+ * 给员工分配角色
+ * @param {*} data id, roleIds
+ * @returns
+ */
+export function assignRoles(data) {
+  return requset({
+    url: '/sys/user/assignRoles',
+    method: 'PUT',
+    data
+  })
+}
