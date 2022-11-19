@@ -25,17 +25,17 @@
                   <el-button
                     size="small"
                     type="success"
-                    @click="setRole(row)"
+                    @click="setRole(row.id)"
                   >分配权限</el-button>
                   <el-button
                     size="small"
                     type="primary"
-                    @click="editRole(row)"
+                    @click="editRole(row.id)"
                   >编辑</el-button>
                   <el-button
                     size="small"
                     type="danger"
-                    @click="delRole(row)"
+                    @click="delRole(row.id)"
                   >删除</el-button>
                 </template>
               </el-table-column>
@@ -130,15 +130,39 @@
           </el-col>
         </el-row>
       </el-dialog>
+
+      <!-- 分配权限弹窗 -->
+      <el-dialog title="分配权限" :visible.sync="dialogVisible" width="50%" @closed="asspClose">
+        <assign-permission
+          ref="assp"
+          v-model="dialogVisible"
+          :permission-list="permissionList"
+          :perm-ids="permIds"
+          @assignPermEV="assignPermFn"
+        />
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getAllroles, getCompany, addRole, getRoleDetail, updateRoleDetail, delRole } from '@/api'
-import { reslog } from '@/utils'
+import {
+  getAllroles,
+  getCompany,
+  addRole,
+  getRoleDetail,
+  updateRoleDetail,
+  delRole,
+  getPermissionList,
+  assignPerm
+} from '@/api'
+import { reslog, transTree } from '@/utils'
+import AssignPermission from './AssignPermission.vue'
 
 export default {
+  components: {
+    AssignPermission
+  },
   data() {
     return {
       activeName: 'first',
@@ -164,12 +188,17 @@ export default {
           { required: true, message: '角色描述不能为空', trigger: 'blur' }
         ]
       },
-      isEdit: false // 新增或编辑角色
+      isEdit: false, // 新增或编辑角色
+      dialogVisible: false, // 分配权限弹窗的显示/隐藏
+      permissionList: [], // 权限列表（树形结构）
+      permIds: [], // 角色现有的权限数据
+      roleId: ''
     }
   },
   created() {
     this.getAllrolesArr()
     this.getCompanyObj()
+    this.getPermissionListFn()
   },
   methods: {
     // 获取所有角色列表
@@ -185,9 +214,14 @@ export default {
       this.companyObj = res.data
       // console.log(res)
     },
+    // 获取权限列表
+    async getPermissionListFn() {
+      const res = await getPermissionList()
+      this.permissionList = transTree(res.data, '0')
+    },
     // 角色弹框-> 确定按钮
     roleSubmit() {
-      this.$refs.roleForm.validate(async valid => {
+      this.$refs.roleForm.validate(async(valid) => {
         if (valid) {
           if (this.isEdit) {
             // 编辑
@@ -230,24 +264,40 @@ export default {
       this.query.page = page
       this.getAllrolesArr()
     },
-    // 设置角色
-    setRole(data) {
-
+    // 点击-分配权限
+    async setRole(id) {
+      this.roleId = id
+      const res = await getRoleDetail(id)
+      this.permIds = res.data.permIds
+      this.dialogVisible = true
+      // console.log(res)
     },
     // 编辑角色
-    async editRole(data) {
+    async editRole(id) {
       this.showDialog = true
       this.isEdit = true
-      const res = await getRoleDetail(data.id)
+      const res = await getRoleDetail(id)
       this.roleForm = res.data
     },
     // 删除角色
-    async delRole(data) {
-      const res = await delRole(data.id)
+    async delRole(id) {
+      const res = await delRole(id)
       if (this.rolesList.length === 1 && this.query.page > 1) {
         this.query.page--
       }
       await this.getAllrolesArr()
+      reslog(res)
+    },
+    // 分配权限弹窗关闭
+    asspClose() {
+      this.$refs.assp.$refs.tree.setCheckedKeys([])
+    },
+    // 分配权限
+    async assignPermFn(permIds) {
+      const res = await assignPerm({
+        id: this.roleId,
+        permIds
+      })
       reslog(res)
     }
   }

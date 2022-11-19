@@ -15,9 +15,13 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
-import GlobalComponent from '@/components'
+import Directives from './directives'
 
-Vue.use(GlobalComponent) // 自定义全局组件
+import GlobalComponents from '@/components'
+
+Vue.use(GlobalComponents) // 自定义全局组件
+
+Vue.use(Directives) // 自定义全局指令
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

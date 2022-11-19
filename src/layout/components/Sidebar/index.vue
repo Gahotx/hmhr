@@ -31,7 +31,10 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      // return this.$router.options.routes
+      // 默认的options方法只有初始的静态路由表，没有后续addRoutes添加的动态路由
+      // 所以自己用vuex另存一份路由表用于显示侧边栏
+      return this.$store.state.permission.routes
     },
     activeMenu() {
       const route = this.$route

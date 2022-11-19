@@ -75,10 +75,10 @@ export const constantRoutes = [
       path: '',
       component: () => import('@/views/excel')
     }]
-  },
+  }
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  // { path: '*', redirect: '/404', hidden: true }
 ]
 
 // 动态路由表，需要权限
@@ -97,7 +97,8 @@ const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes: [...constantRoutes, ...variableRoutes]
+    // routes: [...constantRoutes, ...variableRoutes]
+    routes: constantRoutes
   })
 
 const router = createRouter()

@@ -1,5 +1,6 @@
 import { userLogin, getUserProfile, getUserDetail } from '@/api'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
@@ -56,6 +57,7 @@ const actions = {
   logoutActions({ commit }) {
     commit('REMOVE_TOKEN')
     commit('REMOVE_USER')
+    resetRouter()
     // console.log('已退出')
   }
 }

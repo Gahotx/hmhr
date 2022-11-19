@@ -10,8 +10,18 @@
 
         <!-- 自定义右侧内容 -->
         <template #slot-right>
-          <el-button type="danger" size="small" @click="$router.push('/excel')">导入excel</el-button>
-          <el-button type="success" size="small" @click="exportList">导出excel</el-button>
+          <el-button
+            v-power="'import'"
+            type="danger"
+            size="small"
+            @click="$router.push('/excel')"
+          >导入excel</el-button>
+          <el-button
+            v-power="'export'"
+            type="success"
+            size="small"
+            @click="exportList"
+          >导出excel</el-button>
           <el-button
             type="primary"
             size="small"
@@ -51,9 +61,25 @@
           />
           <el-table-column label="操作" width="280">
             <template #default="{ row }">
-              <el-button type="text" size="small" @click="$router.push(`/employees/detail?id=${row.id}&form=${row.formOfEmployment}`)">查看</el-button>
-              <el-button type="text" size="small" @click="setRole(row.id)">分配角色</el-button>
-              <el-button type="text" size="small" @click="delEmpFn(row.id)">删除</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="
+                  $router.push(
+                    `/employees/detail?id=${row.id}&form=${row.formOfEmployment}`
+                  )
+                "
+              >查看</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="setRole(row.id)"
+              >分配角色</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="delEmpFn(row.id)"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -93,16 +119,33 @@
       </el-dialog>
 
       <!-- 员工-分配角色权限 - 弹窗 -->
-      <el-dialog title="分配角色" :visible.sync="showRoleDialog" @closed="roleClose">
+      <el-dialog
+        title="分配角色"
+        :visible.sync="showRoleDialog"
+        @closed="roleClose"
+      >
         <!-- 设置角色组件 -->
-        <assign-role ref="AssignRole" :roles-list="rolesList" @assignRolesEV="assignRolesFn" @close="showRoleDialog = false" />
+        <assign-role
+          ref="AssignRole"
+          :roles-list="rolesList"
+          @assignRolesEV="assignRolesFn"
+          @close="showRoleDialog = false"
+        />
       </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getUser, getDepartment, addUser, delUser, getAllroles, getUserDetail, assignRoles } from '@/api'
+import {
+  getUser,
+  getDepartment,
+  addUser,
+  delUser,
+  getAllroles,
+  getUserDetail,
+  assignRoles
+} from '@/api'
 import dayjs from 'dayjs'
 import EmpForm from './components/EmpForm'
 import { transTree, reslog } from '@/utils'
@@ -207,7 +250,8 @@ export default {
     },
     formatter(row, column, cellValue, index) {
       return (
-        this.hireType.find((item) => item.id === parseInt(cellValue))?.value || '未知'
+        this.hireType.find((item) => item.id === parseInt(cellValue))?.value ||
+        '未知'
       )
     },
     // 每页显示的条数发生改变时触发
@@ -256,28 +300,38 @@ export default {
     exportList() {
       import('@/vendor/Export2Excel').then(async(excel) => {
         // excel表示导入的模块对象
-        const header = ['姓名', '手机号', '工号', '部门', '聘用形式', '入职日期', '转正日期']
+        const header = [
+          '姓名',
+          '手机号',
+          '工号',
+          '部门',
+          '聘用形式',
+          '入职日期',
+          '转正日期'
+        ]
         const mapObj = {
-          '姓名': 'username',
-          '手机号': 'mobile',
-          '工号': 'workNumber',
-          '部门': 'departmentName',
-          '聘用形式': 'formOfEmployment',
-          '入职日期': 'timeOfEntry',
-          '转正日期': 'correctionTime'
+          姓名: 'username',
+          手机号: 'mobile',
+          工号: 'workNumber',
+          部门: 'departmentName',
+          聘用形式: 'formOfEmployment',
+          入职日期: 'timeOfEntry',
+          转正日期: 'correctionTime'
         }
         const res = await getUser({
           page: 1,
           size: this.total
         })
         const userArr = res.data.rows
-        const data = userArr.map(enObj => {
+        const data = userArr.map((enObj) => {
           const newArr = []
-          header.forEach(zhKey => {
+          header.forEach((zhKey) => {
             const enKey = mapObj[zhKey]
             const value = enObj[enKey]
             if (enKey === 'formOfEmployment') {
-              const formObj = this.hireType.find((item) => item.id === parseInt(value))
+              const formObj = this.hireType.find(
+                (item) => item.id === parseInt(value)
+              )
               newArr.push(formObj ? formObj.value : '未知')
             } else if (enKey === 'timeOfEntry' || enKey === 'correctionTime') {
               newArr.push(dayjs(value).format('YYYY-MM-DD'))
