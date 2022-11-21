@@ -7,11 +7,16 @@
     />
 
     <div class="app-breadcrumb">
-      未来科技股份有限公司
-      <span class="breadBtn">体验版</span>
+      {{ $t('navbar.companyName') }}
+      <span class="breadBtn">{{ $t('navbar.breadBtn') }}</span>
     </div>
 
     <div class="right-menu">
+      <screen-full class="right-menu-item trans" />
+
+      <!-- 语言包 -->
+      <lang class="right-menu-item trans" />
+
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <el-avatar :src="avatar" class="user-avatar">
@@ -22,13 +27,13 @@
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item> 首页 </el-dropdown-item>
+            <el-dropdown-item> {{ $t('navbar.homePage') }} </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://shuiruohanyu.gitee.io/yyds/api.html">
-            <el-dropdown-item> 项目地址 </el-dropdown-item>
+            <el-dropdown-item> {{ $t('navbar.doc') }} </el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">退出登录</span>
+            <span style="display: block">{{ $t('navbar.logout') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -56,19 +61,23 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(async() => {
-        await this.$store.dispatch('user/logoutActions')
-        this.$router.replace(`/login?redirect=${encodeURIComponent(this.$route.fullPath)}`)
-        this.$message({
-          type: 'success',
-          message: '退出成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消退出'
-        })
       })
+        .then(async() => {
+          await this.$store.dispatch('user/logoutActions')
+          this.$router.replace(
+            `/login?redirect=${encodeURIComponent(this.$route.fullPath)}`
+          )
+          this.$message({
+            type: 'success',
+            message: '退出成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          })
+        })
     }
   }
 }
@@ -119,14 +128,22 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:focus {
       outline: none;
     }
 
+    .trans {
+      cursor: pointer;
+    }
+
     .right-menu-item {
       display: inline-block;
-      padding: 0 8px;
+      padding: 2px;
+      padding-right: 12px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;

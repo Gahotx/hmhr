@@ -83,13 +83,13 @@ export const constantRoutes = [
 
 // 动态路由表，需要权限
 export const variableRoutes = [
+  approvalsRouter,
   departmentsRouter,
-  settingRouter,
   employeesRouter,
   permissionRouter,
-  approvalsRouter,
   attendancesRouter,
   salarysRouter,
+  settingRouter,
   socialRouter
 ]
 
