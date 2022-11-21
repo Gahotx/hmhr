@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
-import ElementUI from 'element-ui'
+import ELEMENT from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/index.scss' // global css
 import App from './App'
@@ -14,13 +14,13 @@ import i18n from '@/lang'
 
 Vue.use(GlobalComponents) // 自定义全局组件
 Vue.use(Directives) // 自定义全局指令
-Vue.use(ElementUI)
+Vue.use(ELEMENT)
 
-ElementUI.Dialog.props.lockScroll.default = false
-ElementUI.MessageBox.setDefaults({
+ELEMENT.Dialog.props.lockScroll.default = false
+ELEMENT.MessageBox.setDefaults({
   lockScroll: false
 })
-ElementUI.TableColumn.props.align.default = 'center'
+ELEMENT.TableColumn.props.align.default = 'center'
 
 Vue.config.productionTip = false
 
